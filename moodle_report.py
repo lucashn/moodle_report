@@ -50,7 +50,7 @@ def show_usage_report(enroled_users: Set[str], access_by_user: Dict[str, int]):
     for user in inactive_users:
         print("\t{}".format(user))
     
-    print("\n-> Usuários de acordo com uso:")
+    print("\n-> Usuários por uso:")
     for user, count in usage_desc:
         print("\t{}: {}".format(user, count))
 
