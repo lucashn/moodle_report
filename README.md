@@ -2,21 +2,28 @@
 
 Descubra os estudantes que não estão participando das aulas no Moodle
 
-## Exemplo de uso:
+## Dependências:
+
+- Flask (para interface web)
+
+## Exemplo de uso (linha de comando):
 
     $ chmod +x moodle_report.py
     $ ./moodle_report.py meu_arquivo_de_log_csv
 
-    ** Relatório de uso **
+** Relatório de uso **
 
-    -> Usuários que nunca entraram no Moodle:
-    	AAAAAAAAAAA
-    	BBBBBBBBBBBB
-    	CCCCCCCCCCCCCCCC
+-> Todos os usuários acessaram o Moodle ao menos uma vez.
 
-    -> Usuários por uso:
-    	DDDDDDDDDD: 150
-    	EEEEEEEEE: 74
-    	FFFFFFFFF: 55
-    	GGGGGGGGGG: 45
+-> Os seguintes usuários não submeteram nenhuma atividade no Moodle.
+       CCCC
 
+-> Número de acessos por usuário:
+        AAAAA: 5
+        BBBBBB: 4
+        CCCC: 2
+
+-> Número de submissões por usuário:
+        AAAAA: 5
+        BBBBBB: 4
+        CCCC: 0

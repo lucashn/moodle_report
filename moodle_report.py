@@ -2,7 +2,7 @@
 
 import csv
 import sys
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict, Set, Tuple, TextIO
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -21,37 +21,39 @@ def main():
     try:
         fname = sys.argv[1]
     except IndexError:
-        print("Uso: {} nome_log.csv".format(sys.argv[0]))
+        print(f"Uso: {sys.argv[0]} nome_log.csv")
         return
 
     try:
-        enroled_users, access_by_user = get_participation_stats(fname)
-        show_usage_report(enroled_users, access_by_user)
+        with open(fname) as file:
+            process(file)
     except Exception as e:
         print("Erro ao processar arquivo de log. Arquivo inválido?")
         print(e)
 
+def process(file: TextIO):
+    enroled_users, access_by_user = get_participation_stats(file)
+    show_usage_report(enroled_users, access_by_user)
 
-def get_participation_stats(fname: str) -> Tuple[Set[str], Dict[str, UserStats]]:
+def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats]]:
     enrolled_users: Set[str] = set()
     stats_by_name: Dict[str, UserStats] = defaultdict(lambda: UserStats(0, 0))
+    
+    reader = csv.reader(file)
+    next(reader)
 
-    with open(fname) as file:
-        reader = csv.reader(file)
-        next(reader)
+    for row in reader:
+        if is_enroll_event(row):
+            enrolled_user_name = row[COL_AFETADO].upper()
+            enrolled_users.add(enrolled_user_name)
+        else:
+            active_user_name = row[COL_NOME].upper()
+            
+            if is_access_event(row):
+                stats_by_name[active_user_name].num_access += 1
 
-        for row in reader:
-            if is_enroll_event(row):
-                enrolled_user_name = row[COL_AFETADO].upper()
-                enrolled_users.add(enrolled_user_name)
-            else:
-                active_user_name = row[COL_NOME].upper()
-                
-                if is_access_event(row):
-                    stats_by_name[active_user_name].num_access += 1
-
-                if is_submit_event(row):
-                    stats_by_name[active_user_name].num_submissions += 1
+            if is_submit_event(row):
+                stats_by_name[active_user_name].num_submissions += 1
 
     return enrolled_users, stats_by_name
 
@@ -73,13 +75,13 @@ def show_usage_report(enroled_users: Set[str], stats_by_name: Dict[str, UserStat
     inactive_users = enroled_users - active_users
 
     print("** Relatório de uso **\n")
-    report_names(inactive_users,
+    report_names(list(inactive_users),
            "Os seguintes usuários não acessaram o Moodle:",
            "Todos os usuários acessaram o Moodle ao menos uma vez.")
 
     users_without_submissions = [name for name, stats in stats_by_name.items() if stats.num_submissions == 0]
     report_names(users_without_submissions,
-           "Os seguintes usuários não submeteram nenhuma atividade no Moodle",
+           "Os seguintes usuários não submeteram nenhuma atividade no Moodle.",
            "Todos os usuários submeteram ao menos uma atividade no Moodle.")
 
     report_values(stats_by_name, "num_access", "Número de acessos por usuário:")
@@ -90,7 +92,7 @@ def report_names(names: List[str], msg_true: str, msg_false: str):
     if names:
         print("-> " + msg_true)
         for name in sorted(names):
-            print("\t{}".format(name))
+            print(f"\t{name}")
     else:
         print("-> " + msg_false)
     print()
@@ -101,7 +103,7 @@ def report_values(stats_by_name: Dict[str, UserStats], attr: str, msg: str):
     sorted_values = sorted(values, key=lambda x: x[1], reverse=True)
 
     for name, val in sorted_values:
-        print(f"\t-> {name}: {val}")
+        print(f"\t{name}: {val}")
     print()
 
 if __name__ == '__main__':

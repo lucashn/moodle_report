@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <title>Analisador de logs do Moodle</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>Analisador de logs do Moodle</h1>
+    </header>
+
+    <main>
+
+      <h2>Descrição</h2>
+
+      Sistema <em>web</em> para processar <em>logs</em> do Moodle, facilitando a identificação dos estudantes com baixa participação.
+
+      <h2>Análise</h2>
+
+      <form method="post" action="/enviar" enctype="multipart/form-data">
+        Submeta o arquivo de log (.csv) para obter a análise de acesso.
+
+        <p>
+          <input id="log" type="file" name="log" accept=".csv">
+        </p>
+
+        <p>
+          <input type="submit" value="Enviar arquivo">
+        </p>
+      </form>
+
+      {% if output %}
+        <h2>Resultado da análise</h2>
+        <pre>{{ output }}</pre>
+      {% endif %}
+
+    </main>
+
+
+    <footer>
+      <p>Instituto Federal de Mato Grosso do Sul - câmpus Nova Andradina</p>
+      <p>Prof. Lucas Hermann Negri - lucas.negri@ ...</p>
+    </footer>
+  </div>
+</body>
+
+</html>
