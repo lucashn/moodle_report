@@ -55,7 +55,14 @@ def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats
             if is_submit_event(row):
                 stats_by_name[active_user_name].num_submissions += 1
 
+    remove_spies(enrolled_users, stats_by_name)
+
     return enrolled_users, stats_by_name
+
+def remove_spies(enrolled_users: Set[str], stats_by_name: Dict[str, UserStats]):
+    spies = set(stats_by_name.keys()) - enrolled_users
+    for spy in spies:
+        del stats_by_name[spy]
 
 
 def is_submit_event(row: List[str]):
