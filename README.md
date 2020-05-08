@@ -4,7 +4,9 @@ Descubra os estudantes que não estão participando das aulas no Moodle
 
 ## Dependências:
 
-- Flask (para interface web)
+- flask (para interface web)
+- gunicorn (para o Heroku)
+
 
 ## Exemplo de uso (linha de comando):
 
