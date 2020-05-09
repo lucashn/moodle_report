@@ -58,6 +58,7 @@ def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats
             if is_submit_event(row):
                 stats_by_name[active_user_name].num_submissions += 1
 
+    fill_all_enrolled(enrolled_users, stats_by_name)
     remove_spies(enrolled_users, stats_by_name)
 
     return enrolled_users, stats_by_name
@@ -68,6 +69,10 @@ def remove_spies(enrolled_users: Set[str], stats_by_name: Dict[str, UserStats]):
     for spy in spies:
         del stats_by_name[spy]
 
+
+def fill_all_enrolled(enrolled_users: Set[str], stats_by_name: Dict[str, UserStats]):
+    for user in enrolled_users:
+        stats_by_name[user]
 
 def is_submit_event(row: List[str]):
     return row[COL_EVENTO] in (EVENTO_ATIVIDADE_ENVIADA, EVENTO_QUESTIONARIO_ENTREGUE)
@@ -82,11 +87,10 @@ def is_access_event(row: List[str]):
 
 
 def show_usage_report(enroled_users: Set[str], stats_by_name: Dict[str, UserStats]):
-    active_users = set(stats_by_name.keys())
-    inactive_users = enroled_users - active_users
+    inactive_users = [name for name in enroled_users if stats_by_name[name].num_access == 0]
 
     print("** Relatório de uso **\n")
-    report_names(list(inactive_users),
+    report_names(inactive_users,
                  "Os seguintes usuários não acessaram o Moodle:",
                  "Todos os usuários acessaram o Moodle ao menos uma vez.")
 
