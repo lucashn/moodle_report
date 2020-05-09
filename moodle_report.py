@@ -9,6 +9,7 @@ from dataclasses import dataclass
 COL_HORA, COL_NOME, COL_AFETADO, COL_EVENTO = 0, 1, 2, 5
 EVENTO_INSCRICAO = "Usuário inscrito no curso"
 EVENTO_ATIVIDADE_ENVIADA = "Um envio foi submetido."
+EVENTO_QUESTIONARIO_ENTREGUE = "Tentativa do questionário entregue"
 
 
 @dataclass
@@ -66,7 +67,7 @@ def remove_spies(enrolled_users: Set[str], stats_by_name: Dict[str, UserStats]):
 
 
 def is_submit_event(row: List[str]):
-    return row[COL_EVENTO] == EVENTO_ATIVIDADE_ENVIADA
+    return row[COL_EVENTO] in (EVENTO_ATIVIDADE_ENVIADA, EVENTO_QUESTIONARIO_ENTREGUE)
 
 
 def is_enroll_event(row: List[str]):
@@ -88,11 +89,11 @@ def show_usage_report(enroled_users: Set[str], stats_by_name: Dict[str, UserStat
 
     users_without_submissions = [name for name, stats in stats_by_name.items() if stats.num_submissions == 0]
     report_names(users_without_submissions,
-           "Os seguintes usuários não submeteram nenhuma atividade no Moodle.",
-           "Todos os usuários submeteram ao menos uma atividade no Moodle.")
+           "Os seguintes usuários não enviaram atividades ou questionários.",
+           "Todos os usuários enviaram ao menos uma atividade ou questionário.")
 
     report_values(stats_by_name, "num_access", "Número de acessos por usuário:")
-    report_values(stats_by_name, "num_submissions", "Número de submissões por usuário:")
+    report_values(stats_by_name, "num_submissions", "Número de envios por usuário:")
 
 
 def report_names(names: List[str], msg_true: str, msg_false: str):
