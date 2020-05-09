@@ -32,14 +32,16 @@ def main():
         print("Erro ao processar arquivo de log. Arquivo inválido?")
         print(e)
 
+
 def process(file: TextIO):
     enroled_users, access_by_user = get_participation_stats(file)
     show_usage_report(enroled_users, access_by_user)
 
+
 def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats]]:
     enrolled_users: Set[str] = set()
     stats_by_name: Dict[str, UserStats] = defaultdict(lambda: UserStats(0, 0))
-    
+
     reader = csv.reader(file)
     next(reader)
 
@@ -49,7 +51,7 @@ def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats
             enrolled_users.add(enrolled_user_name)
         else:
             active_user_name = row[COL_NOME].upper()
-            
+
             if is_access_event(row):
                 stats_by_name[active_user_name].num_access += 1
 
@@ -59,6 +61,7 @@ def get_participation_stats(file: TextIO) -> Tuple[Set[str], Dict[str, UserStats
     remove_spies(enrolled_users, stats_by_name)
 
     return enrolled_users, stats_by_name
+
 
 def remove_spies(enrolled_users: Set[str], stats_by_name: Dict[str, UserStats]):
     spies = set(stats_by_name.keys()) - enrolled_users
@@ -84,13 +87,13 @@ def show_usage_report(enroled_users: Set[str], stats_by_name: Dict[str, UserStat
 
     print("** Relatório de uso **\n")
     report_names(list(inactive_users),
-           "Os seguintes usuários não acessaram o Moodle:",
-           "Todos os usuários acessaram o Moodle ao menos uma vez.")
+                 "Os seguintes usuários não acessaram o Moodle:",
+                 "Todos os usuários acessaram o Moodle ao menos uma vez.")
 
     users_without_submissions = [name for name, stats in stats_by_name.items() if stats.num_submissions == 0]
     report_names(users_without_submissions,
-           "Os seguintes usuários não enviaram atividades ou questionários.",
-           "Todos os usuários enviaram ao menos uma atividade ou questionário.")
+                 "Os seguintes usuários não enviaram atividades ou questionários.",
+                 "Todos os usuários enviaram ao menos uma atividade ou questionário.")
 
     report_values(stats_by_name, "num_access", "Número de acessos por usuário:")
     report_values(stats_by_name, "num_submissions", "Número de envios por usuário:")
@@ -105,14 +108,16 @@ def report_names(names: List[str], msg_true: str, msg_false: str):
         print("-> " + msg_false)
     print()
 
+
 def report_values(stats_by_name: Dict[str, UserStats], attr: str, msg: str):
     print("-> " + msg)
-    values = ((name, getattr(stats, attr) ) for name, stats in stats_by_name.items())
+    values = ((name, getattr(stats, attr)) for name, stats in stats_by_name.items())
     sorted_values = sorted(values, key=lambda x: x[1], reverse=True)
 
     for name, val in sorted_values:
         print(f"\t{name}: {val}")
     print()
+
 
 if __name__ == '__main__':
     main()

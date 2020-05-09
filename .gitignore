@@ -128,7 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-log.csv
-log2.csv
+logs
 
 .vscode

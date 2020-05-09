@@ -8,6 +8,7 @@ import moodle_report
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
     return render_template("main.html")
@@ -26,6 +27,7 @@ def enviar():
         return render_template("main.html", output=out.getvalue())
     except Exception as e:
         return render_template("main.html", output=f"Arquivo inválido ({e})")
+
 
 # utilizado somente quando chamado via python server.py, não via gunicorn
 if __name__ == "__main__":
